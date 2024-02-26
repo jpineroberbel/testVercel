@@ -1,0 +1,69 @@
+<html>
+
+<head>
+  <title>Express</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+ 
+</head>
+
+<body>
+  <h1>Express</h1>
+  <p>Welcome to Express</p>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+  <form>
+    <input type="file" id="fileInput" name="fileInput">
+    <button type="button" id="uploadButton">Upload</button>
+  </form>
+ 
+  <script>
+    const socket = io();
+    const form = document.getElementById('form');
+  const input = document.getElementById('input');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (input.value) {
+      socket.emit('chat message', input.value);
+      input.value = '';
+    }
+  });
+
+  socket.on('chat message', (msg) => {
+    console.log("Recibido "+msg)
+  });
+
+  // subida ficheros por ajax
+
+      const uploadButton = document.getElementById('uploadButton');
+      const fileInput = document.getElementById('fileInput');
+      const endpoint = 'http://localhost:3000/upload';
+      uploadButton.addEventListener('click', () => {
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('sampleFile', file);
+        fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'X-RapidAPI-Key': 'your-rapid-key',
+            'X-RapidAPI-Host': 'file-upload8.p.rapidapi.com'
+          },
+          body: formData
+        })
+        .then(data => {
+          console.log(data);
+          alert('File uploaded successfully!');
+        })
+        .catch(error => {
+          console.error(error);
+          alert('Error uploading file');
+        });
+      });
+    </script>
+  </script>
+</body>
+
+</html>
